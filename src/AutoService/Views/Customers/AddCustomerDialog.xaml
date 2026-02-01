@@ -1,0 +1,35 @@
+﻿<Window x:Class="AutoService.Views.Customers.AddCustomerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Новый клиент" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="260"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" Text="ФИО:"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,8" Text="{Binding FullName}"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,8" Text="Телефон:"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,8" Text="{Binding Phone}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,8" Text="E-mail:"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,8" Text="{Binding Email}"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,0,8,8" Text="Комментарий:"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,8" Text="{Binding Note}"/>
+
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Width="90" Margin="0,0,8,0" IsDefault="True" Content="OK" Click="Ok_Click"/>
+            <Button Width="90" IsCancel="True" Content="Отмена"/>
+        </StackPanel>
+    </Grid>
+</Window>
