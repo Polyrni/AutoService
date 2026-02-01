@@ -1,12 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using AutoService.Data;
+﻿using AutoService.Data;
 using AutoService.Data.Models;
 using AutoService.Infrastructure;
 using AutoService.Views.Customers;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
 
 namespace AutoService.ViewModels.Customers;
 
@@ -26,17 +27,20 @@ public class CustomersViewModel : INotifyPropertyChanged
             _selectedCustomer = value;
             OnPropertyChanged();
             ((RelayCommand)EditCommand).RaiseCanExecuteChanged();
+            ((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
         }
     }
 
     public ICommand AddCommand { get; }
     public ICommand EditCommand { get; }
+    public ICommand DeleteCommand { get; }
     public ICommand RefreshCommand { get; }
 
     public CustomersViewModel()
     {
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, CanEdit);
+        DeleteCommand = new RelayCommand(Delete, CanDelete);
         RefreshCommand = new RelayCommand(Refresh);
         Refresh();
     }
@@ -89,6 +93,33 @@ public class CustomersViewModel : INotifyPropertyChanged
             existing.Phone = dlg.Customer.Phone;
             existing.Email = dlg.Customer.Email;
             existing.Note = dlg.Customer.Note;
+            _db.SaveChanges();
+        }
+
+        Refresh();
+    }
+
+    private bool CanDelete() => SelectedCustomer != null;
+
+    private void Delete()
+    {
+        if (SelectedCustomer == null) return;
+
+        var result = MessageBox.Show(
+            $"Удалить клиента \"{SelectedCustomer.FullName}\"?",
+            "Подтверждение",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+        if (result != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        var existing = _db.Customers.Find(SelectedCustomer.Id);
+        if (existing != null)
+        {
+            _db.Customers.Remove(existing);
             _db.SaveChanges();
         }
 
