@@ -9,7 +9,7 @@
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <Button Content="Добавить" Command="{Binding AddCommand}" />
-                <Button Content="Обновить" Command="{Binding RefreshCommand}" />
+                <Button Content="Изменить" Command="{Binding EditCommand}" />
                 <Button Content="Удалить" Command="{Binding DeleteCommand}" />
             </ToolBar>
         </ToolBarTray>
@@ -18,6 +18,11 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   CanUserAddRows="False">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="2*" />
                 <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*" />
