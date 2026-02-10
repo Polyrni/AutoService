@@ -5,12 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vmCustomers="clr-namespace:AutoService.ViewModels.Customers"
         xmlns:vCustomers="clr-namespace:AutoService.Views.Customers"
+        xmlns:vmEmployees="clr-namespace:AutoService.ViewModels.Employees"
+        xmlns:vEmployees="clr-namespace:AutoService.Views.Employees"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type vmCustomers:CustomersViewModel}">
             <vCustomers:CustomersView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vmEmployees:EmployeesViewModel}">
+            <vEmployees:EmployeesView />
         </DataTemplate>
     </Window.Resources>
 
