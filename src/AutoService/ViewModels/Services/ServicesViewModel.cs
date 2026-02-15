@@ -1,30 +1,30 @@
-﻿using AutoService.Data;
-using AutoService.Data.Models;
-using AutoService.Infrastructure;
-using AutoService.Views.Employees;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using AutoService.Data;
+using AutoService.Data.Models;
+using AutoService.Infrastructure;
+using AutoService.Views.Services;
+using Microsoft.EntityFrameworkCore;
 
-namespace AutoService.ViewModels.Employees;
+namespace AutoService.ViewModels.Services;
 
-public class EmployeesViewModel : INotifyPropertyChanged
+public class ServicesViewModel : INotifyPropertyChanged
 {
     private readonly AppDbContext _db = Db.CreateContext();
 
-    public ObservableCollection<Employe> Employees { get; } = new();
+    public ObservableCollection<Service> Services { get; } = new();
 
-    private Employe? _selectedEmploye;
+    private Service? _selectedService;
 
-    public Employe? SelectedEmploye
+    public Service? SelectedService
     {
-        get => _selectedEmploye;
+        get => _selectedService;
         set
         {
-            _selectedEmploye = value;
+            _selectedService = value;
             OnPropertyChanged();
             ((RelayCommand)EditCommand).RaiseCanExecuteChanged();
             ((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
@@ -36,7 +36,7 @@ public class EmployeesViewModel : INotifyPropertyChanged
     public ICommand DeleteCommand { get; }
     public ICommand RefreshCommand { get; }
 
-    public EmployeesViewModel()
+    public ServicesViewModel()
     {
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, CanEdit);
@@ -47,36 +47,36 @@ public class EmployeesViewModel : INotifyPropertyChanged
 
     private void Refresh()
     {
-        Employees.Clear();
-        foreach (var c in _db.Employees.AsNoTracking().OrderBy(x => x.FullName))
+        Services.Clear();
+        foreach (var c in _db.Services.AsNoTracking().OrderBy(x => x.Id))
         {
-            Employees.Add(c);
+            Services.Add(c);
         }
     }
 
     private void Add()
     {
-        var dlg = new SaveEmployeDialog
+        var dlg = new SaveServiceDialog
         {
             Owner = App.Current.MainWindow
         };
         if (dlg.ShowDialog() != true) return;
 
-        _db.Employees.Add(dlg.Employe);
+        _db.Services.Add(dlg.Service);
         _db.SaveChanges();
         Refresh();
     }
 
-    private bool CanEdit() => SelectedEmploye != null;
+    private bool CanEdit() => SelectedService != null;
 
     private void Edit()
     {
-        if (SelectedEmploye == null)
+        if (SelectedService == null)
         {
             return;
         }
 
-        var dlg = new SaveEmployeDialog(SelectedEmploye)
+        var dlg = new SaveServiceDialog(SelectedService)
         {
             Owner = App.Current.MainWindow
         };
@@ -86,27 +86,24 @@ public class EmployeesViewModel : INotifyPropertyChanged
             return;
         }
 
-        var existing = _db.Employees.Find(dlg.Employe.Id);
+        var existing = _db.Services.Find(dlg.Service.Id);
         if (existing != null)
         {
-            existing.FullName = dlg.Employe.FullName;
-            existing.Phone = dlg.Employe.Phone;
-            existing.Email = dlg.Employe.Email;
-            existing.Note = dlg.Employe.Note;
+            existing.Name = dlg.Service.Name;
             _db.SaveChanges();
         }
 
         Refresh();
     }
 
-    private bool CanDelete() => SelectedEmploye != null;
+    private bool CanDelete() => SelectedService != null;
 
     private void Delete()
     {
-        if (SelectedEmploye == null) return;
+        if (SelectedService == null) return;
 
         var result = MessageBox.Show(
-            $"Удалить сотрудника \"{SelectedEmploye.FullName}\"?",
+            $"Удалить услугу \"{SelectedService.Name}\"?",
             "Подтверждение",
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
@@ -116,10 +113,10 @@ public class EmployeesViewModel : INotifyPropertyChanged
             return;
         }
 
-        var existing = _db.Employees.Find(SelectedEmploye.Id);
+        var existing = _db.Services.Find(SelectedService.Id);
         if (existing != null)
         {
-            _db.Employees.Remove(existing);
+            _db.Services.Remove(existing);
             _db.SaveChanges();
         }
 

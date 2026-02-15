@@ -23,12 +23,12 @@ public partial class SaveEmployeDialog : Window
                 Email = existingEmploye.Email,
                 Note = existingEmploye.Note
             };
-            Title = "Редактировать клиента";
+            Title = "Редактировать сотрудника";
         }
         else
         {
             Employe = new Employe();
-            Title = "Новый клиент";
+            Title = "Новый сотрудник";
         }
 
         DataContext = Employe;
