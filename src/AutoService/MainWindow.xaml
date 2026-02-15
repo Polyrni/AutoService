@@ -21,6 +21,11 @@
 
     <Grid>
         <TabControl>
+
+            <TabItem Header="Заказы">
+                <ContentControl Content="{Binding OrdersVm}" />
+            </TabItem>
+
             <TabItem Header="Справочники">
                 <TabControl>
                     <TabItem Header="Клиенты">
@@ -37,9 +42,6 @@
                 </TabControl>
             </TabItem>
 
-            <TabItem Header="Журналы">
-                <ContentControl Content="{Binding JournalsVm}" />
-            </TabItem>
         </TabControl>
     </Grid>
 </Window>
