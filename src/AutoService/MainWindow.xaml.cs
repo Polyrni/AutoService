@@ -1,6 +1,7 @@
 ﻿using AutoService.ViewModels.Customers;
 using AutoService.ViewModels.Employees;
 using System.Windows;
+using AutoService.ViewModels.Orders;
 using AutoService.ViewModels.Services;
 
 namespace AutoService
@@ -15,6 +16,8 @@ namespace AutoService
         public EmployeesViewModel EmployeesVm { get; } = new();
 
         public ServicesViewModel ServicesVm { get; } = new();
+
+        public OrdersViewModel OrdersVm { get; } = new();
 
         public MainWindow()
         {

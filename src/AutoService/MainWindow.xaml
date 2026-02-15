@@ -9,8 +9,10 @@
         xmlns:vEmployees="clr-namespace:AutoService.Views.Employees"
         xmlns:services="clr-namespace:AutoService.Views.Services"
         xmlns:vmEmployees1="clr-namespace:AutoService.ViewModels.Services"
+        xmlns:orders="clr-namespace:AutoService.Views.Orders"
+        xmlns:vmOrders="clr-namespace:AutoService.ViewModels.Orders"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="1000">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type vmCustomers:CustomersViewModel}">
@@ -21,6 +23,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vmEmployees1:ServicesViewModel}">
             <services:ServicesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vmOrders:OrdersViewModel}">
+            <orders:OrdersView />
         </DataTemplate>
     </Window.Resources>
 
