@@ -1,60 +1,32 @@
-﻿using AutoService.Data;
-using AutoService.Data.Models;
-using AutoService.Infrastructure;
+﻿using AutoService.Data.Models;
 using AutoService.Views.Customers;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
 
 namespace AutoService.ViewModels.Customers;
 
-public class CustomersViewModel : INotifyPropertyChanged
+public class CustomersViewModel : BaseCRUDViewModel<Customer>
 {
-    private readonly AppDbContext _db = Db.CreateContext();
-
-    public ObservableCollection<Customer> Customers { get; } = new();
-
-    private Customer? _selectedCustomer;
-
-    public Customer? SelectedCustomer
+    protected override void DeleteEntity()
     {
-        get => _selectedCustomer;
-        set
+        var existing = _db.Customers.Find(SelectedEntity.Id);
+        if (existing != null)
         {
-            _selectedCustomer = value;
-            OnPropertyChanged();
-            ((RelayCommand)EditCommand).RaiseCanExecuteChanged();
-            ((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
+            _db.Customers.Remove(existing);
+            _db.SaveChanges();
         }
     }
 
-    public ICommand AddCommand { get; }
-    public ICommand EditCommand { get; }
-    public ICommand DeleteCommand { get; }
-    public ICommand RefreshCommand { get; }
-
-    public CustomersViewModel()
+    protected override string ConfirmationDeletionMessage()
     {
-        AddCommand = new RelayCommand(Add);
-        EditCommand = new RelayCommand(Edit, CanEdit);
-        DeleteCommand = new RelayCommand(Delete, CanDelete);
-        RefreshCommand = new RelayCommand(Refresh);
-        Refresh();
+        return $"Удалить клиента \"{SelectedEntity.FullName}\"?";
     }
 
-    private void Refresh()
+    protected override IOrderedQueryable<Customer> GetEntities()
     {
-        Customers.Clear();
-        foreach (var c in _db.Customers.AsNoTracking().OrderBy(x => x.FullName))
-        {
-            Customers.Add(c);
-        }
+        return _db.Customers.AsNoTracking().OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
     }
 
-    private void Add()
+    protected override void AddEntity()
     {
         var dlg = new SaveCustomerDialog
         {
@@ -64,19 +36,11 @@ public class CustomersViewModel : INotifyPropertyChanged
 
         _db.Customers.Add(dlg.Customer);
         _db.SaveChanges();
-        Refresh();
     }
 
-    private bool CanEdit() => SelectedCustomer != null;
-
-    private void Edit()
+    protected override void EditEntity()
     {
-        if (SelectedCustomer == null)
-        {
-            return;
-        }
-
-        var dlg = new SaveCustomerDialog(SelectedCustomer)
+        var dlg = new SaveCustomerDialog(SelectedEntity)
         {
             Owner = App.Current.MainWindow
         };
@@ -89,44 +53,14 @@ public class CustomersViewModel : INotifyPropertyChanged
         var existing = _db.Customers.Find(dlg.Customer.Id);
         if (existing != null)
         {
-            existing.FullName = dlg.Customer.FullName;
+            existing.FirstName = dlg.Customer.FirstName;
+            existing.LastName = dlg.Customer.LastName;
+            existing.MiddleName = dlg.Customer.MiddleName;
             existing.Phone = dlg.Customer.Phone;
-            existing.Email = dlg.Customer.Email;
+            existing.CarBrand = dlg.Customer.CarBrand;
+            existing.LicensePlate = dlg.Customer.LicensePlate;
             existing.Note = dlg.Customer.Note;
             _db.SaveChanges();
         }
-
-        Refresh();
     }
-
-    private bool CanDelete() => SelectedCustomer != null;
-
-    private void Delete()
-    {
-        if (SelectedCustomer == null) return;
-
-        var result = MessageBox.Show(
-            $"Удалить клиента \"{SelectedCustomer.FullName}\"?",
-            "Подтверждение",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
-
-        if (result != MessageBoxResult.Yes)
-        {
-            return;
-        }
-
-        var existing = _db.Customers.Find(SelectedCustomer.Id);
-        if (existing != null)
-        {
-            _db.Customers.Remove(existing);
-            _db.SaveChanges();
-        }
-
-        Refresh();
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged([CallerMemberName] string? n = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
 }

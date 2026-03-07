@@ -58,8 +58,15 @@ namespace AutoService.Managers
 
             try
             {
-                // Обновляем основные данные заказа
-                _db.Orders.Update(order);
+                // Загружаем существующий объект из БД и обновляем его поля
+                var existing = _db.Orders.Find(order.Id)
+                               ?? throw new Exception($"Заказ #{order.Id} не найден");
+
+                existing.CustomerId = order.CustomerId;
+                existing.CreatedAt = order.CreatedAt;
+                existing.UpdatedAt = DateTime.Now;
+                existing.TotalAmount = order.TotalAmount;
+                existing.Note = order.Note;
 
                 // Удаляем старые связи
                 var oldServices = _db.OrderServices
@@ -74,14 +81,15 @@ namespace AutoService.Managers
 
                 _db.SaveChanges();
 
-                // Добавляем новые
+                // Добавляем новые услуги
                 foreach (var service in services)
                 {
                     service.OrderId = order.Id;
-                    service.Id = 0; // Сбрасываем ID для новой записи
+                    service.Id = 0;
                     _db.OrderServices.Add(service);
                 }
 
+                // Добавляем новых сотрудников
                 foreach (var employeeId in employeeIds)
                 {
                     _db.OrderEmployees.Add(new OrderEmployee
@@ -94,7 +102,7 @@ namespace AutoService.Managers
                 _db.SaveChanges();
                 transaction.Commit();
 
-                return order;
+                return existing;
             }
             catch
             {
@@ -138,11 +146,12 @@ namespace AutoService.Managers
         public List<Order> GetAllOrdersWithDetails()
         {
             return _db.Orders
+                .AsNoTracking()
                 .Include(o => o.Customer)
                 .Include(o => o.OrderServices)
-                    .ThenInclude(os => os.Service)
+                .ThenInclude(os => os.Service)
                 .Include(o => o.OrderEmployees)
-                    .ThenInclude(oe => oe.Employee)
+                .ThenInclude(oe => oe.Employee)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToList();
         }
@@ -150,7 +159,7 @@ namespace AutoService.Managers
         public decimal GetServicePrice(int serviceId)
         {
             var service = _db.Services.Find(serviceId);
-            return service != null ? 1000 : 0;
+            return service != null ? service.Cost : 0;
         }
     }
 }

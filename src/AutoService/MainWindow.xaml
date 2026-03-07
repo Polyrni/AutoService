@@ -12,7 +12,7 @@
         xmlns:orders="clr-namespace:AutoService.Views.Orders"
         xmlns:vmOrders="clr-namespace:AutoService.ViewModels.Orders"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1000">
+        Title="Автосервис" Height="450" Width="1000">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type vmCustomers:CustomersViewModel}">

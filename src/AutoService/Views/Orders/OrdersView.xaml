@@ -27,7 +27,7 @@
                 <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat='dd.MM.yyyy HH:mm'}" Width="150"/>
                 <DataGridTextColumn Header="Дата изменения" Binding="{Binding UpdatedAt, StringFormat='dd.MM.yyyy HH:mm'}" Width="150"/>
                 <DataGridTextColumn Header="Клиент" Binding="{Binding Customer.FullName}" Width="200"/>
-                <DataGridTextColumn Header="Сумма" Binding="{Binding TotalAmount, StringFormat=C}" Width="100"/>
+                <DataGridTextColumn Header="Сумма" Binding="{Binding TotalAmount, StringFormat={}{0:N2} ₽}" Width="100"/>
                 <DataGridTextColumn Header="Примечание" Binding="{Binding Note}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>

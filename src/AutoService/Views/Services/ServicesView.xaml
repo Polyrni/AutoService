@@ -13,8 +13,8 @@
                 <Button Content="Удалить" Command="{Binding DeleteCommand}" />
             </ToolBar>
         </ToolBarTray>
-        <DataGrid ItemsSource="{Binding Services}"
-                  SelectedItem="{Binding SelectedService}"
+        <DataGrid ItemsSource="{Binding Entities}"
+                  SelectedItem="{Binding SelectedEntity}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   CanUserAddRows="False"
@@ -28,9 +28,10 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="Специализация" Binding="{Binding Specialization}" Width="*" />
+                <DataGridTextColumn Header="Вид работы" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="Стоимость" Binding="{Binding Cost, StringFormat={}{0:N2} ₽}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
-
 </UserControl>
